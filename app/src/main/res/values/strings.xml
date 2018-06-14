@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">KeyStore</string>
+
+    <string name="current_key">(密钥列表)长按可直接删除, 点击可进行选中\n当前key为：%1$s</string>
+
+    <string name="encrypt_content">加密后内容Base64为：%1$s</string>
+
+    <string name="decrypt_content">解密后内容为：%1$s</string>
+
+    <string name="plaintext">heimaojingzhang321+中文字符</string>
+
+</resources>
