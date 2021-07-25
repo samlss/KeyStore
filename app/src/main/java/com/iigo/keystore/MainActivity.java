@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
     private String plainText; //明文
     private String encryptData; //加密后字符串
+    private String signedData; //签名后数据
 
     private String currentSelectedKeyAlias;
 
@@ -41,9 +42,9 @@ public class MainActivity extends AppCompatActivity {
         updateKeys();
 
         //验证数据签名
-        String data = "1234";
-        byte[] sign = KeyStoreUtil.get().sign(data.getBytes(), "qq");
-        System.out.println("verify: "+KeyStoreUtil.get().verify(data.getBytes(), sign, "qq"));
+//        String data = "1234";
+//        byte[] sign = KeyStoreUtil.get().sign(data.getBytes(), "qq");
+//        System.out.println("verify: "+KeyStoreUtil.get().verify(data.getBytes(), sign, "qq"));
     }
 
     private void updateKeys() {
@@ -133,10 +134,47 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "请先选取alias", Toast.LENGTH_SHORT).show();
             return;
         }
+        if (TextUtils.isEmpty(encryptData)){
+            Toast.makeText(getApplicationContext(), "请先进行加密操作", Toast.LENGTH_SHORT).show();
+            return;
+        }
         byte[] data = KeyStoreUtil.get().decrypt(Base64.decode(encryptData, Base64.DEFAULT), currentSelectedKeyAlias);
         if (data != null){
             tvCipher.setText(getString(R.string.decrypt_content, new String(data)));
         }
+    }
+
+    public void doSign(View view) {
+        if (currentSelectedKeyAlias == null) {
+            Toast.makeText(getApplicationContext(), "请先选取alias", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        // do sha-256
+        byte[] shadata = KeyStoreUtil.get().encryptSHA(plainText.getBytes(), KeyStoreUtil.SHA_ALG);
+        byte[] data = KeyStoreUtil.get().sign(shadata, currentSelectedKeyAlias);
+//        byte[] data = KeyStoreUtil.get().sign(plainText.getBytes(), currentSelectedKeyAlias);
+        if (data != null) {
+            signedData = Base64.encodeToString(data, Base64.DEFAULT);
+            tvCipher.setText(getString(R.string.verify_sign, signedData));
+        }
+    }
+
+    public void doVerify(View view) {
+        if (currentSelectedKeyAlias == null) {
+            Toast.makeText(getApplicationContext(), "请先选取alias", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (TextUtils.isEmpty(signedData)){
+            Toast.makeText(getApplicationContext(), "请先进行签名操作", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        byte[] shadata = KeyStoreUtil.get().encryptSHA(plainText.getBytes(), KeyStoreUtil.SHA_ALG);
+        boolean verify = KeyStoreUtil.get().verify(shadata, Base64.decode(signedData, Base64.DEFAULT), currentSelectedKeyAlias);
+//        boolean verify = KeyStoreUtil.get().verify(plainText.getBytes(),signedData.getBytes(),currentSelectedKeyAlias);
+
+        tvCipher.setText(getString(R.string.verify_content, (verify) ? "match" : "not match"));
+
     }
 
     private class  ViewHolder extends RecyclerView.ViewHolder{
