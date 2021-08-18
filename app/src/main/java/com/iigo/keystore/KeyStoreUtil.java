@@ -12,6 +12,7 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
@@ -40,6 +41,7 @@ public class KeyStoreUtil {
     private KeyStore keyStore;
     private X500Principal x500Principal; //自签署证书
     private static final String CIPHER_TRANSFORMATION = "RSA/ECB/PKCS1Padding";
+    public static final String SHA_ALG = "SHA-256"; //sha 算法
 
     private KeyStoreUtil(){
         init();
@@ -242,7 +244,7 @@ public class KeyStoreUtil {
         try{
             //取出密钥
             KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry)keyStore.getEntry(alias, null);
-            Signature s = Signature.getInstance("SHA1withRSA");
+            Signature s = Signature.getInstance("SHA256withRSA");
             s.initSign(privateKeyEntry.getPrivateKey());
             s.update(data);
             return s.sign();
@@ -274,7 +276,7 @@ public class KeyStoreUtil {
             //取出密钥
             KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry)keyStore.getEntry(alias, null);
 
-            Signature s = Signature.getInstance("SHA1withRSA");
+            Signature s = Signature.getInstance("SHA256withRSA");
             s.initVerify(privateKeyEntry.getCertificate());
             s.update(data);
             return s.verify(signatureData);
@@ -291,4 +293,27 @@ public class KeyStoreUtil {
         }
         return false;
     }
+
+    /**
+     *
+     * @param data to be encrypted
+     * @param shaN encrypt method,SHA-1,SHA-224,SHA-256,SHA-384,SHA-512
+     * @return 已加密的数据
+     * @throws Exception
+     */
+    public byte[] encryptSHA(byte[] data, String shaN){
+        MessageDigest sha = null;
+        try {
+            sha = MessageDigest.getInstance(shaN);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        if (sha == null){
+            return null;
+        }
+        sha.update(data);
+        return sha.digest();
+    }
+
+
 }

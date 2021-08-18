@@ -9,4 +9,9 @@
 
     <string name="plaintext">heimaojingzhang321+中文字符</string>
 
+    <string name="verify_content">验签结果：%1$s</string>
+
+    <string name="verify_sign">签名后内容为：%1$s</string>
+
+    <string name="add_key">输入 alias (任意字符串) 用于添加秘钥 </string>
 </resources>

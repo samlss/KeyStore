@@ -14,6 +14,7 @@
         android:id="@+id/edit_text"
         android:layout_width="match_parent"
         android:layout_height="50dp"
+        android:hint="@string/add_key"
         android:layout_marginTop="5dp" />
 
 
@@ -94,6 +95,29 @@
             android:layout_weight="1"
             android:onClick="doDecrypt"
             android:text="解密" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_sign"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="doSign"
+            android:text="签名" />
+
+        <Button
+            android:id="@+id/btn_verify"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="doVerify"
+            android:text="验签" />
     </LinearLayout>
 
     <TextView
